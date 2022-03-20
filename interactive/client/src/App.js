@@ -45,13 +45,14 @@ function App() {
         username
       })
       .then(response => {
-        
         //tbh, just do a get all; if anyone wants to rewrite this to just adjust the existing positions variable, go ahead; get a mod to review it
         axios.get("/positions/all")
         .then(all => {
           // console.log(all.data.positions);
           setPositions(all.data.positions);
           setChosen(response.data.fen);
+          setFen("");
+          setLink("");
         })
         .catch(err => {
           console.log("Error getting positions...");
@@ -114,7 +115,7 @@ function App() {
               {
                 positions.length > 0 && positions.filter(position => position.fen.includes(search)).map((position, idx) => {
                   return <div key={idx} value={position.fen} 
-                  onClick={onClickPosition}>{chosen === position.fen ? "> ": ""}<span value={position.fen}  style={{ cursor: "pointer", textDecoration: "underline" }}>{position.fen}</span></div>
+                  onClick={onClickPosition}>{chosen === position.fen ? ">": ""}<span value={position.fen}  style={{ cursor: "pointer", textDecoration: "underline" }}>{position.fen}</span></div>
                 })
               }
             </Container>
