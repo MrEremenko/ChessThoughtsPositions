@@ -6,16 +6,16 @@ const path = require("path");
 
 
 router.get('/all', (req, res, next) => {
-  const files = fs.readdirSync("../../openings");
+  const files = fs.readdirSync("../../positions");
   var build = [];
   files.map(file => {
     var local = {};
     local["fen"] = file.replaceAll("-", "/").replace(".json", "");
-    local["file"] = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../openings/" + file)));
+    local["file"] = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../positions/" + file)));
     build.push(local);
   });
 
-  return res.status(200).json({ openings: build });
+  return res.status(200).json({ positions: build });
 });
 
 router.post('/add', (req, res, next) => { 
@@ -27,7 +27,7 @@ router.post('/add', (req, res, next) => {
   var exists = false;
 
   try {
-    fs.statSync(path.join(__dirname, "../../../openings/" + file))
+    fs.statSync(path.join(__dirname, "../../../positions/" + file))
     exists = true;
   } catch(err) {
     exists = false;
@@ -35,7 +35,7 @@ router.post('/add', (req, res, next) => {
   
   if(exists) {
     // console.log("Such a file exists...");
-    build = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../openings/" + file)));
+    build = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../positions/" + file)));
     console.log("file contents now is var")
     console.log(build);
   }
@@ -47,7 +47,7 @@ router.post('/add', (req, res, next) => {
     "addedBy": req.body.username
   });
 
-  fs.writeFileSync(path.join(__dirname, "../../../openings/" + file), JSON.stringify(build, null, 2));
+  fs.writeFileSync(path.join(__dirname, "../../../positions/" + file), JSON.stringify(build, null, 2));
 
   return res.status(200).json({ fen: req.body.fen, file: build });
 });
