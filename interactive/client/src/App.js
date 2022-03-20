@@ -5,7 +5,7 @@ import axios from "axios";
 function App() {
 
   const [positions, setPositions] = useState([]);
-  const [chosen, setChosen] = useState(0);
+  const [chosen, setChosen] = useState("rnbqkbnr/pp1ppppp/2p5/8/3PP3/8/PPP2PPP/RNBQKBNR");
 
   const [fen, setFen] = useState('');
   const [link, setLink] = useState('');
@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   const onClickPosition = (e) => {
-    setChosen(+e.target.getAttribute("value"));
+    setChosen(e.target.getAttribute("value"));
   }
 
   const addPosition = (e) => {
@@ -45,20 +45,17 @@ function App() {
         username
       })
       .then(response => {
-        //if it already existed
-        var index = -1;
-        if(positions.filter(open => open.fen === response.data.fen)) {
-          setPositions(positions.map((open, idx) => {
-            if(open.fen !== response.data.fen)
-              return open;
-            index = idx;
-            return response.data;
-          }))
-        } else {
-          setPositions([...positions, response.data]);
-          index = positions.length;
-        }
-        setChosen(index);
+        
+        //tbh, just do a get all; if anyone wants to rewrite this to just adjust the existing positions variable, go ahead; get a mod to review it
+        axios.get("/positions/all")
+        .then(all => {
+          // console.log(all.data.positions);
+          setPositions(all.data.positions);
+          setChosen(response.data.fen);
+        })
+        .catch(err => {
+          console.log("Error getting positions...");
+        });
       })
       .catch(err => {
         console.log("Error getting positions...");
@@ -116,17 +113,17 @@ function App() {
             <Container fluid={true} className="shadow-lg p-3 mb-3 bg-body rounded" style={{ overflowY: "auto", height: "100%", marginRight: "1vw", borderStyle: "solid", borderWidth: "0.5px", borderColor: "gray" }}>
               {
                 positions.length > 0 && positions.filter(position => position.fen.includes(search)).map((position, idx) => {
-                  return <div key={idx} value={idx} 
-                  onClick={onClickPosition}>{chosen === idx ? "> ": ""}<span value={idx}  style={{ cursor: "pointer", textDecoration: "underline" }}>{position.fen}</span></div>
+                  return <div key={idx} value={position.fen} 
+                  onClick={onClickPosition}>{chosen === position.fen ? "> ": ""}<span value={position.fen}  style={{ cursor: "pointer", textDecoration: "underline" }}>{position.fen}</span></div>
                 })
               }
             </Container>
         </Container>
             <Container style={{ display: "flex", flexDirection: "column", alignContent: "center" }}>
-            {positions.length > 0 && <img style={{ height: "35vh", margin: "2vh auto" }} src={`https://www.chess.com/dynboard?fen=${positions[chosen].fen}&board=green&piece=neo&size=3`}/> }
+            {positions.length > 0 && <img style={{ height: "35vh", margin: "2vh auto" }} src={`https://www.chess.com/dynboard?fen=${chosen}&board=green&piece=neo&size=3`}/> }
               <Container className="shadow-lg bg-body rounded overflow-auto" style={{ overflowY: "auto", height: "100%", minWidth: "400px", maxWidth: "30vw", margin: "1vw auto", borderStyle: "solid", borderWidth: "0.5px", borderColor: "gray" }}>
                 <hr/>
-                {positions.length > 0 && positions[chosen].file.map((link,idx) => {
+                {positions.length > 0 && positions.find(e => e.fen === chosen).file.map((link,idx) => {
                   return <div key={idx}>
                     <div>Link: {link.link}</div>
                     <div>Added By: {link.addedBy}</div>
