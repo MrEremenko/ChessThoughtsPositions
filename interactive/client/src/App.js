@@ -14,6 +14,9 @@ function App() {
   const [error, setError] = useState('');
 
   const [search, setSearch] = useState('');
+  
+  const [flipped, setFlipped] = useState(false);
+
 
   useEffect(() => {
     axios.get("/positions/all")
@@ -62,6 +65,10 @@ function App() {
         console.log("Error getting positions...");
       });
     }
+  }
+
+  const clickImage = (e) => {
+    setFlipped(!flipped);
   }
 
   return (
@@ -121,7 +128,7 @@ function App() {
             </Container>
         </Container>
             <Container style={{ display: "flex", flexDirection: "column", alignContent: "center" }}>
-            {positions.length > 0 && <img style={{ height: "35vh", margin: "2vh auto" }} src={`https://www.chess.com/dynboard?fen=${chosen}&board=green&piece=neo&size=3`}/> }
+            {positions.length > 0 && <img title="Click to flip!" onClick={clickImage} style={{ height: "35vh", margin: "2vh auto" }} src={`https://www.chess.com/dynboard?fen=${chosen}&board=green&piece=neo&size=3${flipped ? "&flip=true" : ""}`}/> }
               <Container className="shadow-lg bg-body rounded overflow-auto" style={{ overflowY: "auto", height: "100%", minWidth: "400px", maxWidth: "30vw", margin: "1vw auto", borderStyle: "solid", borderWidth: "0.5px", borderColor: "gray" }}>
                 <hr/>
                 {positions.length > 0 && positions.find(e => e.fen === chosen).file.map((link,idx) => {
