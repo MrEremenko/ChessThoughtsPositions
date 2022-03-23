@@ -40,10 +40,17 @@ router.post('/add', (req, res, next) => {
     console.log(build);
   }
 
+  var options = {
+    year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }
+
+  let usFormat = new Date().toLocaleDateString("en", options).split("/");
   //now add onto it
   build.push({ 
     "link": req.body.link,
-    "dateAdded": new Date().toISOString().substr(0,10),
+    "dateAdded": `${usFormat[2]}-${usFormat[0]}-${usFormat[1]}`,
     "addedBy": req.body.username
   });
 

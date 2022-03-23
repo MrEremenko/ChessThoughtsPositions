@@ -5,7 +5,7 @@ import axios from "axios";
 function App() {
 
   const [positions, setPositions] = useState([]);
-  const [chosen, setChosen] = useState("rnbqkbnr/pp1ppppp/2p5/8/3PP3/8/PPP2PPP/RNBQKBNR");
+  const [chosen, setChosen] = useState("rnbqkbnr/pp2pppp/2p5/3p4/3PP3/8/PPP2PPP/RNBQKBNR");
 
   const [fen, setFen] = useState('');
   const [link, setLink] = useState('');
